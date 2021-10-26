@@ -22,3 +22,5 @@ export const cors: CorsOptions = {
   optionsSuccessStatus: 200,
   credentials: Boolean(process.env.CORS_CREDENTIALS) || true,
 };
+
+
