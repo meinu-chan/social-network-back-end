@@ -22,9 +22,3 @@ export const cors: CorsOptions = {
   optionsSuccessStatus: 200,
   credentials: Boolean(process.env.CORS_CREDENTIALS) || true,
 };
-
-export const mongo = {
-  forceClose: true,
-  uri: process.env.MONGO_URI || 'mongodb://localhost/development-social-network',
-  database: process.env.DB_NAME || 'development-social-network',
-};
