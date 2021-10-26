@@ -9,6 +9,8 @@ import swaggerJsDocs from 'swagger-jsdoc';
 
 import cors from 'cors';
 import helmet from 'helmet';
+import globalErrorHandler from './lib/errors';
+import api from './api';
 
 process.on('uncaughtException', (e: Error) => {
   console.log('ERROR', e);
@@ -29,6 +31,10 @@ if (env !== 'production') {
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDocs(swaggerOptions)));
 }
 
+app.use('/api/v1', api);
+
 app.use((req: express.Request, res: express.Response) => res.sendStatus(404));
+
+app.use(globalErrorHandler);
 
 export default app;
