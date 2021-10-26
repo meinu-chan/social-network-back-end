@@ -1,7 +1,15 @@
 import { port } from '.';
 
 export const mongo = {
-  uri: process.env.MONGO_URI || 'mongodb://localhost/development-social-network',
+  uri:
+    process.env.MONGO_URI ||
+    ' mongodb://root:root@mongo:27017/development-social-network?authSource=admin&w=1',
+  options: {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  },
 };
 
 export const swaggerOptions = {
