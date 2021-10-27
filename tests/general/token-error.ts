@@ -12,22 +12,22 @@ export default ({
   permission = true,
   paginated = false,
   nestedRoutes,
-}: ITokenErrors) =>
+}: ITokenErrors) => {
+  beforeAll(() => {
+    r = request[method];
+
+    if (params) {
+      Object.values(params).forEach((param) => (route += `/${param}`));
+    }
+
+    if (nestedRoutes) {
+      nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
+    }
+
+    if (paginated) route = route.concat('?limit=10&page=1');
+  });
+
   describe(`${route} Handle token errors`, () => {
-    beforeAll(() => {
-      r = request[method];
-
-      if (params) {
-        Object.values(params).forEach((param) => (route += `/${param}`));
-      }
-
-      if (nestedRoutes) {
-        nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
-      }
-
-      if (paginated) route = route.concat('?limit=10&page=1');
-    });
-
     test(`You are not logged in.`, async () => {
       const { status, body } = await r(route);
 
@@ -64,3 +64,4 @@ export default ({
         expect(body.message).toMatch(/You don't have permission/);
       });
   });
+};

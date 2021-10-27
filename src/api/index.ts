@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import sessionV1 from './session';
+import awsV1 from './aws';
 
 const router = Router();
 
 router.use('/session', sessionV1);
+router.use('/aws', awsV1);
 
 /**
  * @swagger
@@ -51,6 +53,24 @@ router.use('/session', sessionV1);
  *              password:
  *                  type: string
  *                  description: user's password
+ *                  required: true
+ *      GenerateGetUrl:
+ *          type: object
+ *          properties:
+ *              key:
+ *                  type: string
+ *                  description: object key
+ *                  required: true
+ *      GeneratePutUrl:
+ *          type: object
+ *          properties:
+ *              key:
+ *                  type: string
+ *                  description: object key
+ *                  required: true
+ *              contentType:
+ *                  type: string
+ *                  description: object key
  *                  required: true
  *  responses:
  *      UnauthorizedError:
