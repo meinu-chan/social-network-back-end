@@ -5,8 +5,8 @@
   "main": "src",
   "scripts": {
     "start": "node build/src/index.js",
-    "dev": "nodemon --watch src/ --ignore build/ -e .ts --exec ts-node src",
-    "test": "jest --runInBand"
+    "dev": "NODE_ENV=development nodemon --watch src/ --ignore build/ -e .ts --exec ts-node --files src",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +18,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.13.0",
     "helmet": "^4.6.0",
+    "husky": "^7.0.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.8",
     "swagger-jsdoc": "^6.1.0",
