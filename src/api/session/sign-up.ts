@@ -13,7 +13,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     const isExist = await User.exists({ email: body.email });
 
     if (isExist) {
-      throw new AppError('User already exist.', 400);
+      throw new AppError('User already exists.', 400);
     }
 
     const user = await User.create(body);
