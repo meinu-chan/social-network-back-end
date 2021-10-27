@@ -68,7 +68,7 @@ userSchema.pre<IUser>('save', async function (next) {
 userSchema.methods = {
   view(): IUser {
     const view: any = {};
-    let fields: string[] = ['_id', 'email', 'fullName', 'role'];
+    const fields: string[] = ['_id', 'email', 'fullName', 'role'];
 
     fields.forEach((field: string) => (view[field] = this.get(field)));
 

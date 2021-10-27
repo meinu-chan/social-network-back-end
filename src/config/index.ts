@@ -1,4 +1,3 @@
-import { CookieOptions } from 'express';
 import { CorsOptions } from 'cors';
 
 if (!process.env.NODE_ENV || ['development', 'test'].includes(process.env.NODE_ENV)) {
@@ -22,5 +21,3 @@ export const cors: CorsOptions = {
   optionsSuccessStatus: 200,
   credentials: Boolean(process.env.CORS_CREDENTIALS) || true,
 };
-
-
