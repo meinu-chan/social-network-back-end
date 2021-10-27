@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { emailRegex, fullNameRegex, roles } from '../../constants/user';
 
@@ -53,8 +53,6 @@ const userSchema: Schema = new Schema(
 // Methods
 
 userSchema.pre<IUser>('save', async function (next) {
-  if (!this.isModified('password')) return next();
-
   try {
     if (this.password) {
       const salt: string = await bcrypt.genSalt(10);
