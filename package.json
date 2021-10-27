@@ -5,8 +5,9 @@
   "main": "src",
   "scripts": {
     "start": "node build/src/index.js",
-    "dev": "nodemon --watch src/ --ignore build/ -e .ts --exec ts-node src",
-    "test": "jest --runInBand"
+    "dev": "NODE_ENV=development nodemon --watch src/ --ignore build/ -e .ts --exec ts-node --files src",
+    "lint": "./node_modules/.bin/eslint . --ext .ts --fix src",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -35,6 +36,7 @@
     "@types/supertest": "^2.0.11",
     "@types/swagger-jsdoc": "^6.0.1",
     "@types/swagger-ui-express": "^4.1.3",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
@@ -42,7 +44,9 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
     "jest": "^27.3.1",
+    "lint-staged": "^11.2.6",
     "mongodb-memory-server": "^6.9.6",
     "nodemon": "^2.0.14",
     "prettier": "^2.4.1",
