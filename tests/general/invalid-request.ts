@@ -15,37 +15,37 @@ export default ({
   params,
   paginated = false,
   nestedRoutes,
-}: IInvalidRequest) =>
+}: IInvalidRequest) => {
+  beforeAll(() => {
+    r = request[method];
+
+    auth = userRole ? true : false;
+
+    if (params) {
+      Object.values(params).forEach((param) => (route += `/${param}`));
+    }
+
+    if (nestedRoutes) {
+      nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
+    }
+
+    if (paginated) route = route.concat('?limit=10&page=1');
+  });
+
+  beforeEach(async () => {
+    if (auth) {
+      user = await User.create({
+        fullName: 'Some User',
+        email: 'someuser@mail.com',
+        password: 's0mEPa5$W*rd',
+        role: userRole,
+      });
+
+      userSession = signToken(user.id);
+    }
+  });
+
   describe(`${route} Invalid params.`, () => {
-    beforeAll(() => {
-      r = request[method];
-
-      auth = userRole ? true : false;
-
-      if (params) {
-        Object.values(params).forEach((param) => (route += `/${param}`));
-      }
-
-      if (nestedRoutes) {
-        nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
-      }
-
-      if (paginated) route = route.concat('?limit=10&page=1');
-    });
-
-    beforeEach(async () => {
-      if (auth) {
-        user = await User.create({
-          fullName: 'Some User',
-          email: 'someuser@mail.com',
-          password: 's0mEPa5$W*rd',
-          role: userRole,
-        });
-
-        userSession = signToken(user.id);
-      }
-    });
-
     if (body)
       Object.keys(body).map((key: string) => {
         if (invalidBody && invalidBody[key]) {
@@ -83,3 +83,4 @@ export default ({
         }
       });
   });
+};

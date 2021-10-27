@@ -1,4 +1,4 @@
-import User, { IUser, IUserRoles } from '../../src/api/user/model';
+import User, { IUser, UserRole } from '../../src/api/user/model';
 import { signToken } from '../../src/services/jwt/index';
 import { IBasicRequestError } from './constants';
 
@@ -9,37 +9,37 @@ export default ({
   method,
   request,
   params,
-  userRole = IUserRoles.admin,
+  userRole = UserRole.admin,
   nestedRoutes,
-}: IBasicRequestError) =>
+}: IBasicRequestError) => {
+  beforeAll(() => {
+    r = request[method];
+
+    auth = userRole ? true : false;
+
+    if (params) {
+      Object.values(params).forEach((param) => (route += `/${param}`));
+    }
+
+    if (nestedRoutes) {
+      nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
+    }
+  });
+
+  beforeEach(async () => {
+    if (auth) {
+      user = await User.create({
+        fullName: 'Some User',
+        email: 'someuser@mail.com',
+        password: 's0mEPa5$W*rd',
+        role: userRole,
+      });
+
+      userSession = signToken(user.id);
+    }
+  });
+
   describe(`${route} Invalid pagination params.`, () => {
-    beforeAll(() => {
-      r = request[method];
-
-      auth = userRole ? true : false;
-
-      if (params) {
-        Object.values(params).forEach((param) => (route += `/${param}`));
-      }
-
-      if (nestedRoutes) {
-        nestedRoutes.forEach((nestedRoute) => (route += `/${nestedRoute}`));
-      }
-    });
-
-    beforeEach(async () => {
-      if (auth) {
-        user = await User.create({
-          fullName: 'Some User',
-          email: 'someuser@mail.com',
-          password: 's0mEPa5$W*rd',
-          role: userRole,
-        });
-
-        userSession = signToken(user.id);
-      }
-    });
-
     test(`Query params - missing limit`, async () => {
       const newRoute = route + '/?page=1';
       const { status, body } = auth
@@ -129,3 +129,4 @@ export default ({
       );
     });
   });
+};

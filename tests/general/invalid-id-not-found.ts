@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import User, { IUser, IUserRoles } from '../../src/api/user/model';
+import User, { IUser, UserRole } from '../../src/api/user/model';
 import { signToken } from '../../src/services/jwt/index';
 import { IInvalidIdOrNotFound } from './constants';
 
@@ -10,34 +10,34 @@ export default ({
   method,
   param = 'id',
   request,
-  userRole = IUserRoles.admin,
+  userRole = UserRole.admin,
   reqBody = {},
   paginated = false,
   params,
   nestedRoutes,
-}: IInvalidIdOrNotFound) =>
+}: IInvalidIdOrNotFound) => {
+  beforeAll(() => {
+    r = request[method];
+
+    auth = userRole ? true : false;
+
+    if (params) Object.values(params).forEach((p) => (route += `/${p}`));
+  });
+
+  beforeEach(async () => {
+    if (auth) {
+      user = await User.create({
+        fullName: 'Some User',
+        email: 'someuser@mail.com',
+        password: 's0mEPa5$W*rd',
+        role: userRole,
+      });
+
+      userSession = signToken(user.id);
+    }
+  });
+
   describe(`${route} Handle invalid id and notFound`, () => {
-    beforeAll(() => {
-      r = request[method];
-
-      auth = userRole ? true : false;
-
-      if (params) Object.values(params).forEach((p) => (route += `/${p}`));
-    });
-
-    beforeEach(async () => {
-      if (auth) {
-        user = await User.create({
-          fullName: 'Some User',
-          email: 'someuser@mail.com',
-          password: 's0mEPa5$W*rd',
-          role: userRole,
-        });
-
-        userSession = signToken(user.id);
-      }
-    });
-
     test(`Bad request - invalid ${param}`, async () => {
       let newRoute = route.concat('/invalid-id');
 
@@ -76,3 +76,4 @@ export default ({
       expect(body.message).toMatch(/not found/);
     });
   });
+};

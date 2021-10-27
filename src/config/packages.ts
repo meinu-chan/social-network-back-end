@@ -1,4 +1,5 @@
 import { port } from '.';
+import { requireEnv } from './helpers';
 
 export const mongo = {
   uri: process.env.MONGO_URI || 'mongodb://localhost/development-social-network',
@@ -22,4 +23,12 @@ export const swaggerOptions = {
     servers: [{ url: `http://localhost:${port}` }],
   },
   apis: ['./**/*.ts'],
+};
+
+export const aws = {
+  accessKeyId: requireEnv('S3_KEY'),
+  secretAccessKey: requireEnv('S3_SECRET'),
+  region: requireEnv('BUCKET_REGION'),
+  bucket: requireEnv('BUCKET_NAME'),
+  urlExpiration: Number(process.env.AWS_URL_EXPIRATION) || 2 * 60 * 60,
 };
