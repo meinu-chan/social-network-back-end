@@ -1,12 +1,23 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import User from '../user/model';
 import { AppError } from '../../lib/errors';
 import { cookieParams } from '../../config/access';
 import { signToken } from '../../services/jwt';
 import Session from './model';
 import { matchedData } from 'express-validator';
+import { TypedRequest } from '../../types/common/request';
+import { ISessionSignUpResponse } from '../../types/response/session/sign-up';
 
-export default async function (req: Request, res: Response, next: NextFunction) {
+interface IBody {
+  email: string;
+  password: string;
+}
+
+export default async function (
+  req: TypedRequest<{ body: IBody }>,
+  res: Response<ISessionSignUpResponse | AppError>,
+  next: NextFunction,
+) {
   try {
     const body = matchedData(req, { locations: ['body'] });
 
