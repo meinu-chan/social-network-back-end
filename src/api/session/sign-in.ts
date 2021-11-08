@@ -1,14 +1,25 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import User from '../user/model';
 import { AppError } from '../../lib/errors';
 import { signToken } from '../../services/jwt';
 import Session from './model';
 import { cookieParams } from '../../config/access';
 import { matchedData } from 'express-validator';
+import { TypedRequest } from '../../types/common/request';
+import { ISessionSignInResponse } from '../../types/response/session/sign-in';
 
-export default async function (req: Request, res: Response, next: NextFunction) {
+interface IBody {
+  email: string;
+  password: string;
+}
+
+export default async function (
+  req: TypedRequest<{ body: IBody }>,
+  res: Response<ISessionSignInResponse | AppError>,
+  next: NextFunction,
+) {
   try {
-    const body = matchedData(req, { locations: ['body'] });
+    const body = matchedData(req, { locations: ['body'] }) as IBody;
 
     if (!body.email || !body.password) {
       throw new AppError('Please provide email and password!', 400);

@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AppError } from '../../lib/errors';
 import User from '../../api/user/model';
 import { verify } from '../jwt/index';
-import { AuthRequest } from '../../types/common/auth-request';
+import { AuthTypedRequest } from '../../types/common/request';
 
 interface UserInToken {
   _id: string;
@@ -12,7 +12,7 @@ interface UserInToken {
   exp: number;
 }
 
-export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = async (req: AuthTypedRequest, res: Response, next: NextFunction) => {
   try {
     let token: string | undefined;
     const auth = req.headers.authorization as string;
@@ -50,7 +50,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 };
 
 export const restrictTo = (...roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthTypedRequest, res: Response, next: NextFunction) => {
     if (!roles.includes(req.user.role)) {
       return next(new AppError("You don't have permission to perform this action.", 403));
     }

@@ -5,7 +5,12 @@ import signIn from './sign-in';
 import signUp from './sign-up';
 import refreshTokens from './refresh-token';
 import logOut from './log-out';
-import { validateSignUp, validateSignIn } from '../../constants/session';
+import {
+  validateSignUp,
+  validateSignIn,
+  validateRefreshToken,
+  validateLogOut,
+} from '../../constants/session';
 
 const router = Router();
 
@@ -116,7 +121,8 @@ router.post('/sign-in', validate(validateSignIn), signIn);
  *          404:
  *             $ref: '#/components/responses/NotFoundError'
  */
-router.put('/refresh-tokens', refreshTokens);
+//@ts-ignore
+router.put('/refresh-tokens', validate(validateRefreshToken), refreshTokens);
 
 /**
  * @swagger
@@ -136,6 +142,6 @@ router.put('/refresh-tokens', refreshTokens);
  *             $ref: '#/components/responses/NotFoundError'
  */
 // @ts-ignore
-router.post('/log-out', protect, logOut);
+router.post('/log-out', protect, validate(validateLogOut), logOut);
 
 export default router;

@@ -2,11 +2,22 @@ import { Response, NextFunction } from 'express';
 import { AppError } from '../../lib/errors';
 import { cookieParams as cookie } from '../../config/access';
 import Session from './model';
-import { AuthRequest } from '../../types/common/auth-request';
+import { AuthTypedRequest } from '../../types/common/request';
+import { matchedData } from 'express-validator';
+import { ISessionLogOutResponse } from '../../types/response/session/log-out';
 
-export default async (req: AuthRequest, res: Response, next: NextFunction) => {
+interface ICookie {
+  refreshToken: string;
+}
+
+export default async (
+  req: AuthTypedRequest<{ cookies: ICookie }>,
+  res: Response<ISessionLogOutResponse | AppError>,
+  next: NextFunction,
+) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refreshToken } = matchedData(req, { locations: ['cookies'] }) as ICookie;
+
     const session = await Session.findOne({ userId: req.user.id, refreshToken });
     if (!session) {
       throw new AppError('Session not found.', 404);
@@ -18,7 +29,7 @@ export default async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     res.cookie('refreshToken', 'deleted', { expires: new Date(0), ...cookieParams });
 
-    res.sendStatus(204);
+    res.status(204).json(null);
   } catch (error) {
     return next(error);
   }

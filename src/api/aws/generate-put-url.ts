@@ -1,10 +1,21 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { generatePutUrl } from '../../services/s3';
+import { TypedRequest } from '../../types/common/request';
+import { IAWSGeneratePutUrlResponse } from '../../types/response/aws/generate-put-url';
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+interface IBody {
+  key: string;
+  contentType: string;
+}
+
+export default async (
+  req: TypedRequest<{ body: IBody }>,
+  res: Response<IAWSGeneratePutUrlResponse>,
+  next: NextFunction,
+) => {
   try {
-    const body = matchedData(req, { locations: ['body'] });
+    const body = matchedData(req, { locations: ['body'] }) as IBody;
 
     const url = await generatePutUrl(body.key, body.contentType);
 

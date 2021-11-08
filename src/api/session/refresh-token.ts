@@ -1,12 +1,24 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { signToken } from '../../services/jwt';
 import { AppError } from '../../lib/errors';
 import Session from './model';
 import { cookieParams } from '../../config/access';
+import { TypedRequest } from '../../types/common/request';
+import { ISessionRefreshTokenResponse } from '../../types/response/session/refresh-tokens';
+import { matchedData } from 'express-validator';
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+interface ICookie {
+  refreshToken: string;
+}
+
+export default async (
+  req: TypedRequest<{ cookies: ICookie }>,
+  res: Response<ISessionRefreshTokenResponse | AppError>,
+  next: NextFunction,
+) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refreshToken } = matchedData(req, { locations: ['cookies'] }) as ICookie;
+
     const session = await Session.findOne({ refreshToken });
     if (!session) {
       throw new AppError('Session not found.', 404);

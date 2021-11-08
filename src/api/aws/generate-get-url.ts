@@ -1,10 +1,20 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { generateGetUrl } from '../../services/s3';
+import { TypedRequest } from '../../types/common/request';
+import { IAWSGenerateGetUrlResponse } from '../../types/response/aws/generate-get-url';
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+interface IBody {
+  key: string;
+}
+
+export default async (
+  req: TypedRequest<{ body: IBody }>,
+  res: Response<IAWSGenerateGetUrlResponse>,
+  next: NextFunction,
+) => {
   try {
-    const body = matchedData(req, { locations: ['body'] });
+    const body = matchedData(req, { locations: ['body'] }) as IBody;
 
     const url = await generateGetUrl(body.key);
 

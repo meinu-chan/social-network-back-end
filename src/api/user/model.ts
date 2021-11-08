@@ -1,4 +1,4 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, LeanDocument, model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { emailRegex, fullNameRegex, roles } from '../../constants/user';
 
@@ -7,7 +7,9 @@ export enum UserRole {
   user = 'user',
 }
 
-export interface IUser extends Document {
+export type IUser = LeanDocument<Omit<IUserDocument, 'id' | '__v' | 'view' | 'comparePassword'>>;
+
+export interface IUserDocument extends Document {
   email: string;
   fullName: string;
   password: string;
@@ -17,7 +19,7 @@ export interface IUser extends Document {
   comparePassword: (password: string) => Promise<boolean>;
 }
 
-const userSchema: Schema = new Schema(
+const userSchema: Schema<IUserDocument> = new Schema(
   {
     email: {
       type: String,
@@ -50,29 +52,32 @@ const userSchema: Schema = new Schema(
   },
 );
 
-// Methods
-
-userSchema.pre<IUser>('save', async function (next) {
+userSchema.pre<IUserDocument>('save', async function (next) {
   try {
     if (this.password) {
       const salt: string = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, salt);
     }
     next();
-  } catch (error) {
-    //@ts-ignore
+  } catch (error: any) {
     return next(error);
   }
 });
 
+userSchema.index({ email: 1 }, { unique: true });
+
+userSchema.set('toObject', {
+  virtuals: true,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform: (doc, ret, options) => {
+    delete ret.id;
+    delete ret.password;
+  },
+});
+
 userSchema.methods = {
   view(): IUser {
-    const view: any = {};
-    const fields: string[] = ['_id', 'email', 'fullName', 'role'];
-
-    fields.forEach((field: string) => (view[field] = this.get(field)));
-
-    return view;
+    return this.toObject();
   },
 
   comparePassword(password: string): Promise<boolean> {
@@ -80,4 +85,4 @@ userSchema.methods = {
   },
 };
 
-export default model<IUser>('User', userSchema);
+export default model<IUserDocument>('User', userSchema);

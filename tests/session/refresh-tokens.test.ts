@@ -35,8 +35,8 @@ describe(`${route} Handle request errors`, () => {
   test('Token not passed', async () => {
     const { status, body } = await request.put(route);
 
-    expect(status).toBe(404);
-    expect(body.message).toMatch(/Session not found/);
+    expect(status).toBe(400);
+    expect(body.message).toMatch(/cannot be empty/);
   });
 
   test('Invalid token', async () => {

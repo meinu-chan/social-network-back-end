@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
-import User, { IUser, UserRole } from '../../src/api/user/model';
+import User, { IUserDocument, UserRole } from '../../src/api/user/model';
 import { signToken } from '../../src/services/jwt/index';
 import { IInvalidIdOrNotFound } from './constants';
 
-let r: any, user: IUser, userSession: any, auth: boolean;
+let r: any, user: IUserDocument, userSession: any, auth: boolean;
 
 export default ({
   route,

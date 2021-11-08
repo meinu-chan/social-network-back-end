@@ -6,9 +6,12 @@ import { refreshExpiresInMS, refreshMaxCount } from '../../config/access';
 export interface ISession extends Document {
   userId: IUser['_id'];
   refreshToken: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const sessionSchema: Schema = new Schema(
+const sessionSchema: Schema<ISession> = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,

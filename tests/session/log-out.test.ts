@@ -50,7 +50,7 @@ describe(`${route} Handle log out errors`, () => {
     const token = signToken(user.id);
     const { status, body } = await request.post(route).set('Authorization', `Bearer ${token}`);
 
-    expect(status).toBe(404);
-    expect(body?.message).toMatch(/Session not found/);
+    expect(status).toBe(400);
+    expect(body?.message).toMatch(/cannot be empty/);
   });
 });
