@@ -11,6 +11,8 @@ import { ISessionSignUpResponse } from '../../types/response/session/sign-up';
 interface IBody {
   email: string;
   password: string;
+  nickname?: string;
+  photo?: string;
 }
 
 export default async function (
@@ -19,9 +21,14 @@ export default async function (
   next: NextFunction,
 ) {
   try {
-    const body = matchedData(req, { locations: ['body'] });
+    const body = matchedData(req, { locations: ['body'] }) as IBody;
 
-    const isExist = await User.exists({ email: body.email });
+    const isExist = await User.exists({
+      $or: [
+        { $and: [{ nickname: { $exists: true } }, { nickname: body.nickname }] },
+        { email: body.email },
+      ],
+    });
 
     if (isExist) {
       throw new AppError('User already exists.', 400);

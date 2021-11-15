@@ -1,16 +1,19 @@
 import { cookie } from 'express-validator';
-import { bodyStringExist } from './general';
+import { bodyStringExist, bodyStringOptional } from './general';
 import { emailRegex, fullNameRegex, passwordRegex } from './user';
 
 export const validateSignUp = [
   bodyStringExist('fullName').matches(fullNameRegex),
   bodyStringExist('password').matches(passwordRegex),
   bodyStringExist('email').matches(emailRegex),
+  bodyStringOptional('nickname'),
+  bodyStringOptional('photo'),
 ];
 
 export const validateSignIn = [
   bodyStringExist('password').matches(passwordRegex),
   bodyStringExist('email').matches(emailRegex),
+  bodyStringOptional('nickname'),
 ];
 
 export const validateLogOut = [

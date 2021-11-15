@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import sessionV1 from './session';
 import awsV1 from './aws';
+import userV1 from './user';
 
 const router = Router();
 
 router.use('/session', sessionV1);
 router.use('/aws', awsV1);
+router.use('/users', userV1);
 
 /**
  * @swagger

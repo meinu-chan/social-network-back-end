@@ -14,6 +14,8 @@ export interface IUserDocument extends Document {
   fullName: string;
   password: string;
   role: UserRole;
+  nickname?: string;
+  photo?: string;
 
   view: () => IUser;
   comparePassword: (password: string) => Promise<boolean>;
@@ -26,8 +28,16 @@ const userSchema: Schema<IUserDocument> = new Schema(
       trim: true,
       lowercase: true,
       match: emailRegex,
-      index: true,
       required: true,
+    },
+    nickname: {
+      type: String,
+      trim: true,
+      minlength: 3,
+    },
+    photo: {
+      type: String,
+      required: false,
     },
     fullName: {
       type: String,
@@ -64,7 +74,9 @@ userSchema.pre<IUserDocument>('save', async function (next) {
   }
 });
 
-userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ email: 1, nickname: 1 }, { unique: true, sparse: true });
+
+userSchema.index({ createdAt: -1 });
 
 userSchema.set('toObject', {
   virtuals: true,
