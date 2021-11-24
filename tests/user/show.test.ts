@@ -3,9 +3,9 @@ import app from '../../src/app';
 import User from '../../src/api/user/model';
 import { RequestMethod } from '../general/constants';
 import { signToken } from '../../src/services/jwt';
-import tokenError from '../general/token-error';
+import invalidIdNotFound from '../general/invalid-id-not-found';
 
-const route = '/api/v1/users/me';
+const route = '/api/v1/users/';
 const method = RequestMethod.get;
 const request = supertest(app);
 
@@ -23,7 +23,7 @@ describe(`${route} success get user`, () => {
 
     const userToken = signToken(user.id);
 
-    const { status, body } = await request[method](route).set(
+    const { status, body } = await request[method](`${route}${user.id}`).set(
       'Authorization',
       `Bearer ${userToken}`,
     );
@@ -40,4 +40,4 @@ describe(`${route} success get user`, () => {
   });
 });
 
-tokenError({ request, method, route, permission: false });
+invalidIdNotFound({ request, method, route });

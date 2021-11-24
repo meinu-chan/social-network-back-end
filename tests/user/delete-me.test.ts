@@ -6,7 +6,7 @@ import { signToken } from '../../src/services/jwt';
 import tokenError from '../general/token-error';
 
 const route = '/api/v1/users/me';
-const method = RequestMethod.get;
+const method = RequestMethod.delete;
 const request = supertest(app);
 
 const payload = {
@@ -17,8 +17,8 @@ const payload = {
   photo: 'photoUrl',
 };
 
-describe(`${route} success get user`, () => {
-  test('Successfully got user', async () => {
+describe(`${route} success delete my account`, () => {
+  test('Successfully deleted my account', async () => {
     const user = await User.create(payload);
 
     const userToken = signToken(user.id);
@@ -28,15 +28,8 @@ describe(`${route} success get user`, () => {
       `Bearer ${userToken}`,
     );
 
-    expect(status).toBe(200);
-    expect(typeof body).toBe('object');
-
-    type PayloadKey = keyof typeof payload;
-
-    for (const key of Object.keys(payload) as PayloadKey[]) {
-      if (key === 'password') continue;
-      expect(body[key]).toBe(payload[key]);
-    }
+    expect(status).toBe(204);
+    expect(body).toStrictEqual({});
   });
 });
 
