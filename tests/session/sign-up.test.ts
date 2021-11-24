@@ -41,7 +41,7 @@ invalidRequest({
 });
 
 describe(`${route}/sing-up. Handle request errors`, () => {
-  test('User already exist', async () => {
+  test('User already exist(email duplicate)', async () => {
     await User.create({
       email: 'a@a.com',
       fullName: 'Test A',
@@ -51,6 +51,25 @@ describe(`${route}/sing-up. Handle request errors`, () => {
     const { status, body } = await request.post(route).send({
       email: 'a@a.com',
       fullName: 'Test A',
+      password: 'teatA!1234',
+    });
+
+    expect(status).toBe(400);
+    expect(typeof body).toBe('object');
+    expect(body.message).toMatch(/User already exists/);
+  });
+  test('User already exist(nickname duplicate)', async () => {
+    await User.create({
+      email: 'a@a.com',
+      fullName: 'Test A',
+      nickname: 'nickname',
+      password: 'teatA!1234',
+    });
+
+    const { status, body } = await request.post(route).send({
+      email: 'a1@a.com',
+      fullName: 'Test A',
+      nickname: 'nickname',
       password: 'teatA!1234',
     });
 

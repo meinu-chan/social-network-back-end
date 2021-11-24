@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { port } from './config';
 import { mongo } from './config/packages';
 import app from './app';

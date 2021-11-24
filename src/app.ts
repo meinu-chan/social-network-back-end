@@ -13,6 +13,7 @@ import globalErrorHandler from './lib/errors';
 import api from './api';
 
 process.on('uncaughtException', (e: Error) => {
+  // eslint-disable-next-line no-console
   console.log('ERROR', e);
 });
 

@@ -66,6 +66,7 @@ const sendErrorDev = (err: any, req: Request, res: Response) => {
 
   // B) FOR POSSIBLE STATIC TEMPLATE PAGES
   // 1) Log error
+  // eslint-disable-next-line no-console
   console.error('ERROR:', err);
   // 2) Send generic message
   return res.status(err.statusCode).json({
@@ -86,6 +87,7 @@ const sendErrorProd = (err: any, req: Request, res: Response) => {
     }
     // B) Programming or other unknown error: don't leak error details
     // 1) Log error
+    // eslint-disable-next-line no-console
     console.error('ERROR:', err);
     // 2) Send generic message
     return res.status(500).json({
@@ -104,6 +106,7 @@ const sendErrorProd = (err: any, req: Request, res: Response) => {
   }
   // B) Programming or other unknown error: don't leak error details
   // 1) Log error
+  // eslint-disable-next-line no-console
   console.error('ERROR:', err);
   // 2) Send generic message
   return res.status(err.statusCode).json({
