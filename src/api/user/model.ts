@@ -69,7 +69,7 @@ userSchema.pre<IUserDocument>('save', async function (next) {
       this.password = await bcrypt.hash(this.password, salt);
     }
     next();
-  } catch (error) {
+  } catch (error: any) {
     return next(error);
   }
 });
