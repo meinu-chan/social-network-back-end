@@ -44,7 +44,7 @@ export const protect = async (req: AuthTypedRequest, res: Response, next: NextFu
     req.user = currentUser;
 
     next();
-  } catch (err: any) {
+  } catch (err) {
     next(err);
   }
 };
