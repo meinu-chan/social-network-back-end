@@ -4,7 +4,7 @@
   "description": "",
   "main": "src",
   "scripts": {
-    "start": "node build/src/index.js",
+    "start": "node ./build/src/index.js",
     "dev": "NODE_ENV=development nodemon --watch src/ --ignore build/ -e .ts --exec ts-node --files src",
     "lint": "./node_modules/.bin/eslint . --ext .ts --fix src",
     "build": "tsc -p tsconfig.json",
