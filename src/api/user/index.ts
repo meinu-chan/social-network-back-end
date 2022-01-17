@@ -12,7 +12,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/v1/users/me:
+ * /api/v1/users:
  *  get:
  *      summary: Successfully got list of users
  *      description: Successfully got list of users
