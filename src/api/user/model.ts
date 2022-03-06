@@ -16,6 +16,7 @@ export interface IUserDocument extends Document {
   role: UserRole;
   nickname?: string;
   photo?: string;
+  backgroundAvatar?: string;
 
   view: () => IUser;
   comparePassword: (password: string) => Promise<boolean>;
@@ -35,10 +36,8 @@ const userSchema: Schema<IUserDocument> = new Schema(
       trim: true,
       minlength: 3,
     },
-    photo: {
-      type: String,
-      required: false,
-    },
+    photo: String,
+    backgroundAvatar: String,
     fullName: {
       type: String,
       trim: true,

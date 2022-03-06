@@ -28,3 +28,5 @@ export const generatePutUrl = (Key: string, ContentType: string) =>
     Key,
     ContentType,
   });
+
+export const deleteObject = (Key: string) => s3.deleteObject({ Bucket: aws.bucket, Key });

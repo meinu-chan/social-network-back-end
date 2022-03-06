@@ -15,6 +15,7 @@ export const validateUpdateMeUser = [
   bodyStringOptional('fullName'),
   bodyStringOptional('nickname'),
   bodyStringOptional('photo'),
+  bodyStringOptional('backgroundAvatar'),
 ];
 
 export const validateListUser = validatePaginationQuery;
