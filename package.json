@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "node build/index.js",
     "dev": "NODE_ENV=development nodemon --watch src/ --ignore build/ -e .ts --exec ts-node --files src",
