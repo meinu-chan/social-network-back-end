@@ -1,3 +1,4 @@
+import { query } from 'express-validator';
 import { bodyStringOptional, validateMongoId, validatePaginationQuery } from './general';
 
 export const emailRegex = /^\S+@\S+\.\S+$/;
@@ -19,3 +20,7 @@ export const validateUpdateMeUser = [
 ];
 
 export const validateListUser = validatePaginationQuery;
+
+export const validateNonPaginatedListUser = [
+  query('field').optional().isString().withMessage('- should be a string.').bail(),
+];
