@@ -6,7 +6,13 @@ import show from './show';
 import showMe from './show-me';
 import updateMe from './update-me';
 import list from './list';
-import { validateShowUser, validateUpdateMeUser, validateListUser } from '../../constants/user';
+import nonPaginate from './non-paginate';
+import {
+  validateShowUser,
+  validateUpdateMeUser,
+  validateListUser,
+  validateNonPaginatedListUser,
+} from '../../constants/user';
 
 const router = Router();
 
@@ -31,7 +37,7 @@ const router = Router();
  *            required: true
  *            description: Page selects which page to return - &page=2&limit=5 returns 5 items skipping first 5 (>0)
  *      responses:
- *          201:
+ *          200:
  *             description: Successfully got list of users
  *             content:
  *                 application/json:
@@ -54,6 +60,38 @@ router.get('/', validate(validateListUser), list);
 
 /**
  * @swagger
+ * /api/v1/users/non-paginated:
+ *  get:
+ *      summary: Successfully got list of users
+ *      description: Successfully got list of users
+ *      tags: ["User"]
+ *      parameters:
+ *          - in: query
+ *            name: field
+ *            schema:
+ *                type: string
+ *            description: Filter users by fullName and nickname
+ *      responses:
+ *          200:
+ *             description: Successfully got list of users
+ *             content:
+ *                 application/json:
+ *                     example:
+ *                      [
+ *                              {
+ *                                  "_id": "user-id",
+ *                                  "email": "example@mail.com",
+ *                                  "fullName": "User Name",
+ *                              }
+ *                      ]
+ *          400:
+ *             $ref: '#/components/responses/BadRequestError'
+ */
+//@ts-ignore
+router.get('/non-paginated', validate(validateNonPaginatedListUser), nonPaginate);
+
+/**
+ * @swagger
  * /api/v1/users/me:
  *  get:
  *      summary: Successfully got me
@@ -62,7 +100,7 @@ router.get('/', validate(validateListUser), list);
  *          - BearerAuth: []
  *      tags: ["User"]
  *      responses:
- *          201:
+ *          200:
  *             description: Successfully got me
  *             content:
  *                 application/json:
@@ -94,7 +132,7 @@ router.get('/me', protect, showMe);
  *            description: The user id
  *      requestBody:
  *      responses:
- *          201:
+ *          200:
  *             description: Successfully got user by id
  *             content:
  *                 application/json:
@@ -133,7 +171,7 @@ router.get('/:id', validate(validateShowUser), show);
  *                 "photo":"updated photo"
  *                }
  *      responses:
- *          201:
+ *          200:
  *             description: Successfully updated me
  *             content:
  *                 application/json:
