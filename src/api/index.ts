@@ -45,6 +45,34 @@ router.use('/users', userV1);
  *                  type: string
  *                  description: user's password
  *                  required: true
+ *              birthday:
+ *                  type: string
+ *                  description: user's birthday
+ *              phone:
+ *                  type: string
+ *                  description: user's phone
+ *              job:
+ *                  type: string
+ *                  description: user's job
+ *              school:
+ *                  type: string
+ *                  description: user's school
+ *              university:
+ *                  type: string
+ *                  description: user's university
+ *              country:
+ *                  type: object
+ *                  description: user's country
+ *                  required:
+ *                      - name
+ *                      - flag
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          description: country name
+ *                      flag:
+ *                          type: string
+ *                          description: country flag
  *      SignIn:
  *          type: object
  *          properties:

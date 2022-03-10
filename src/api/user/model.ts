@@ -9,6 +9,11 @@ export enum UserRole {
 
 export type IUser = LeanDocument<Omit<IUserDocument, 'id' | '__v' | 'view' | 'comparePassword'>>;
 
+interface IUserCountry {
+  name: string;
+  flag: string;
+}
+
 export interface IUserDocument extends Document {
   email: string;
   fullName: string;
@@ -17,6 +22,13 @@ export interface IUserDocument extends Document {
   nickname?: string;
   photo?: string;
   backgroundAvatar?: string;
+  birthday?: Date;
+  country?: IUserCountry;
+  phone?: string;
+  hobbies?: string;
+  job?: string;
+  school?: string;
+  university?: string;
 
   view: () => IUser;
   comparePassword: (password: string) => Promise<boolean>;
@@ -54,6 +66,18 @@ const userSchema: Schema<IUserDocument> = new Schema(
       default: UserRole.user,
       enum: roles,
     },
+    birthday: Date,
+    country: {
+      _id: false,
+      type: {
+        name: { type: String, required: true },
+        flag: { type: String, required: true },
+      },
+    },
+    phone: String,
+    job: String,
+    school: String,
+    university: String,
   },
   {
     timestamps: true,

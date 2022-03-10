@@ -9,13 +9,21 @@ const route = '/api/v1/session/sign-up';
 const method = RequestMethod.post;
 const request = supertest(app);
 
+const payload = {
+  email: 'a1@a.com',
+  fullName: 'Test A',
+  password: 'teatA!1234',
+  birthday: new Date(),
+  country: { name: 'name', flag: 'flag' },
+  phone: '(123)-456-7899',
+  jon: 'job',
+  school: 'school',
+  university: 'university',
+};
+
 describe(`${route}. Success`, () => {
   test('User successfully created', async () => {
-    const { status, body } = await request.post(route).send({
-      email: 'a1@a.com',
-      fullName: 'Test A',
-      password: 'teatA!1234',
-    });
+    const { status, body } = await request.post(route).send(payload);
 
     expect(status).toBe(201);
     expect(typeof body).toBe('object');
@@ -36,42 +44,26 @@ invalidRequest({
   request,
   method,
   route,
-  body: { email: 'a@a.com', fullName: 'Test A', password: 'teatA!1234' },
+  body: payload,
+  allRequired: false,
   invalidBody: { email: 'a.com', fullName: 'Test$A', password: 'teatA1234' },
 });
 
 describe(`${route}/sing-up. Handle request errors`, () => {
   test('User already exist(email duplicate)', async () => {
-    await User.create({
-      email: 'a@a.com',
-      fullName: 'Test A',
-      password: 'teatA!1234',
-    });
+    await User.create(payload);
 
-    const { status, body } = await request.post(route).send({
-      email: 'a@a.com',
-      fullName: 'Test A',
-      password: 'teatA!1234',
-    });
+    const { status, body } = await request.post(route).send(payload);
 
     expect(status).toBe(400);
     expect(typeof body).toBe('object');
     expect(body.message).toMatch(/User already exists/);
   });
   test('User already exist(nickname duplicate)', async () => {
-    await User.create({
-      email: 'a@a.com',
-      fullName: 'Test A',
-      nickname: 'nickname',
-      password: 'teatA!1234',
-    });
+    const payloadWithNickname = { ...payload, nickname: 'nickname' };
+    await User.create(payloadWithNickname);
 
-    const { status, body } = await request.post(route).send({
-      email: 'a1@a.com',
-      fullName: 'Test A',
-      nickname: 'nickname',
-      password: 'teatA!1234',
-    });
+    const { status, body } = await request.post(route).send(payloadWithNickname);
 
     expect(status).toBe(400);
     expect(typeof body).toBe('object');
