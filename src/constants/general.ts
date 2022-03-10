@@ -15,6 +15,18 @@ export const bodyStringOptional = (field: string): ValidationChain =>
 export const isValidMongoId: CustomValidator = (value) =>
   isValidObjectId(value.toString()) ? value : Promise.reject('Mongo id validation fail');
 
+export const isValidDate: CustomValidator = (date: string) => {
+  const validDate = new Date(date);
+
+  const error = 'invalid date';
+
+  if (validDate.toString().toLowerCase() === error) {
+    return Promise.reject(error);
+  }
+
+  return true;
+};
+
 export const validateMongoId = [
   param('id')
     .exists({ checkNull: true, checkFalsy: true })
