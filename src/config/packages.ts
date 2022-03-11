@@ -20,7 +20,10 @@ export const swaggerOptions = {
       version: '1.0.0', // Version (required)
       description: 'CRUD API', // Description (optional)
     },
-    servers: [{ url: `http://localhost:${port}` }],
+    servers: [
+      { url: `http://localhost:${port}` },
+      { url: 'https://social-network-back-end.herokuapp.com/' },
+    ],
   },
   apis: ['./**/*.ts'],
 };
