@@ -86,9 +86,12 @@ const userSchema: Schema<IUserDocument> = new Schema(
 );
 
 userSchema.pre<IUserDocument>('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
   try {
     if (this.password) {
-      this.password = await bcrypt.hash(this.password, 10);
+      const salt: string = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
     }
     next();
   } catch (error: any) {
