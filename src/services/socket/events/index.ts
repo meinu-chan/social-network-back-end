@@ -1,7 +1,8 @@
+import { ToClientReceiveMessageEvent } from '../../../types/socket/to-client/chat';
 import {
   ToClientConnectionEvent,
   ToClientDisconnectionEvent,
-} from '../../../types/socket/connection';
+} from '../../../types/socket/to-client/connection';
 
 export const notifyClientOnline = (
   payload: ToClientConnectionEvent['payload'],
@@ -15,4 +16,13 @@ export const notifyClientDisconnect = (
 ): ToClientDisconnectionEvent => ({
   event: 'disconnect',
   payload,
+});
+
+export const notifyClientReceiveMessage = (
+  payload: ToClientReceiveMessageEvent['payload'],
+  room: string,
+): ToClientReceiveMessageEvent => ({
+  event: 'receiveMessage',
+  payload,
+  room,
 });

@@ -30,6 +30,8 @@ export interface IBasicRequestError {
 
   //is request is paginated
   paginated?: boolean;
+
+  query?: string[];
 }
 
 export interface ITokenErrors extends IBasicRequestError {

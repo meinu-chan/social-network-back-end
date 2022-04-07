@@ -1,12 +1,13 @@
-import { IEventHandler } from '../../../types/socket/common';
-import { FromClientConnectionEvent } from '../../../types/socket/connection';
+import { IEventHandler, ISocket } from '../../../types/socket/common';
+import { FromClientConnectionEvent } from '../../../types/socket/from-client/connection';
 import { notifyClientOnline } from '../events';
 import { users } from '../users';
 
-export const connectUser = (
+export function connectUser(
+  this: ISocket,
   userId: FromClientConnectionEvent['payload'],
-  socketId: string,
-): IEventHandler => {
-  users[socketId] = userId;
+): IEventHandler {
+  users[this.id] = userId;
+
   return { event: notifyClientOnline(userId), notify: 'others' };
-};
+}

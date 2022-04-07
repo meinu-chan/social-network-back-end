@@ -4,7 +4,7 @@ import { ITokenErrors } from './constants';
 
 let r: any;
 
-export default ({
+function tokenError({
   route,
   method,
   params,
@@ -12,7 +12,7 @@ export default ({
   permission = true,
   paginated = false,
   nestedRoutes,
-}: ITokenErrors) => {
+}: ITokenErrors) {
   beforeAll(() => {
     r = request[method];
 
@@ -64,4 +64,6 @@ export default ({
         expect(body.message).toMatch(/You don't have permission/);
       });
   });
-};
+}
+
+export default tokenError;
