@@ -53,22 +53,23 @@ describe(`${route} success get message`, () => {
   });
 
   test('Successfully got messages', async () => {
-    const { status, body } = await request[method](`${route}/${chatId}?skip=1`).set(
+    const { status, body } = await request[method](`${route}/${chatId}`).set(
       'Authorization',
       `Bearer ${token}`,
     );
 
     expect(status).toBe(200);
-    expect(Array.isArray(body)).toBe(true);
-    expect(body.length).toBe(1);
+    expect(body.firstUnreadMessage).toBe(null);
+    expect(Array.isArray(body.messages)).toBe(true);
+    expect(body.messages.length).toBe(2);
 
     type MessageKey = keyof IMessagePayload;
 
     (Object.keys(messagePayload) as MessageKey[]).forEach((key) => {
-      expect(body[0][key]).toStrictEqual(messagePayload[key]);
+      expect(body.messages[0][key]).toStrictEqual(messagePayload[key]);
     });
 
-    expect(body[0].text).toBe(messageText + 2);
+    expect(body.messages[0].text).toBe(messageText + 1);
   });
 });
 

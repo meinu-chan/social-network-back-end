@@ -1,9 +1,10 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose';
 import { createHash, randomBytes } from 'crypto';
 import { IUser } from '../user/model';
 import { refreshExpiresInMS, refreshMaxCount } from '../../config/access';
 
 export interface ISession extends Document {
+  _id: Types.ObjectId;
   userId: IUser['_id'];
   refreshToken: string;
 

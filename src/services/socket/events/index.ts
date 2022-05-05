@@ -7,14 +7,14 @@ import {
 export const notifyClientOnline = (
   payload: ToClientConnectionEvent['payload'],
 ): ToClientConnectionEvent => ({
-  event: 'online',
+  event: 'USER::ONLINE',
   payload,
 });
 
 export const notifyClientDisconnect = (
   payload: ToClientDisconnectionEvent['payload'],
 ): ToClientDisconnectionEvent => ({
-  event: 'disconnect',
+  event: 'USER::DISCONNECT',
   payload,
 });
 
@@ -22,7 +22,7 @@ export const notifyClientReceiveMessage = (
   payload: ToClientReceiveMessageEvent['payload'],
   room: string,
 ): ToClientReceiveMessageEvent => ({
-  event: 'receiveMessage',
+  event: 'CHAT::RECEIVE',
   payload,
   room,
 });

@@ -3,7 +3,7 @@ import { AppError } from '../../lib/errors';
 import Chat, { IChat } from './model';
 import { AuthTypedRequest } from '../../types/common/request';
 import User, { IUser } from '../user/model';
-import { IChatStartResponse } from '../../types/response/chat/join';
+import { IChatStartResponse } from '../../types/response/chat/start';
 
 interface IBody extends Pick<IChat, 'isPrivate'> {
   withUser: IUser['_id'];

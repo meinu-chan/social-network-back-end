@@ -1,4 +1,5 @@
 import { ClientToServerEvent, IEventHandler, ISocket } from '../../../types/socket/common';
+import { leaveRoom } from '../helpers/room';
 import { connectUser } from './connect-user';
 import { isOnlineUser } from './is-online';
 import { joinRoom } from './join-room';
@@ -12,8 +13,9 @@ type SocketEventHandler = {
 };
 
 export const handler: SocketEventHandler = {
-  connect: connectUser,
-  isOnline: isOnlineUser,
-  joinRoom,
-  sendMessage,
+  'USER::CONNECT': connectUser,
+  'USER::IS_ONLINE': isOnlineUser,
+  'CHAT::JOIN': joinRoom,
+  'CHAT::SEND': sendMessage,
+  'CHAT::LEAVE': leaveRoom,
 };

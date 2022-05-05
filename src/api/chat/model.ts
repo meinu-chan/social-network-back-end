@@ -1,14 +1,26 @@
 import { Document, LeanDocument, Model, model, Schema, Types } from 'mongoose';
+import { IMessage } from '../message/model';
 import { IUser } from '../user/model';
 
 export type IChat = LeanDocument<Omit<IChatDocument, 'id' | '__v'>>;
 
 export interface IChatDocument extends Document {
   isPrivate: boolean;
-  members: IUser['_id'][];
+  members: Types.Array<IUser['_id']>;
 }
+
+interface IFindWithLastMessageObject extends Omit<IChat, 'members'> {
+  members: IUser[];
+  lastMessage: IMessage;
+  unread: number;
+}
+
 interface IChatModel extends Model<IChatDocument> {
   findOrCreate: (body: Pick<IChat, 'isPrivate' | 'members'>) => Promise<IChatDocument>;
+  findWithLastMessage: (
+    userId: IUser['_id'],
+    skip: number,
+  ) => Promise<IFindWithLastMessageObject[]>;
 }
 
 const chatSchema: Schema<IChatDocument> = new Schema(
@@ -29,7 +41,7 @@ const chatSchema: Schema<IChatDocument> = new Schema(
 );
 
 chatSchema.statics = {
-  async findOrCreate(body: Pick<IChatDocument, 'isPrivate' | 'members'>) {
+  async findOrCreate(body: Pick<IChatDocument, 'isPrivate' | 'members'>): Promise<IChatDocument> {
     const matchPrivateStage = { $match: { isPrivate: true } };
     const addMembersSizeStage = { $addFields: { membersSize: { $size: '$members' } } };
     const matchMembersStage = {
@@ -47,6 +59,126 @@ chatSchema.statics = {
     if (!chat) chat = await this.create(body);
 
     return chat;
+  },
+  async findWithLastMessage(
+    userId: IUser['_id'],
+    skip: number,
+  ): Promise<IFindWithLastMessageObject[]> {
+    const userObjectId = new Types.ObjectId(userId);
+
+    const matchUserChatStage = {
+      $match: {
+        members: userObjectId,
+      },
+    };
+
+    const skipStage = { $skip: skip };
+
+    const limitStage = { $limit: 10 };
+
+    const lookupMembersStage = {
+      $lookup: {
+        from: 'users',
+        let: { userId: '$members' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: ['$_id', '$$userId'],
+              },
+            },
+          },
+          {
+            $project: {
+              password: 0,
+            },
+          },
+        ],
+        as: 'members',
+      },
+    };
+
+    const sortByCreatedAtStage = { $sort: { createdAt: -1 } };
+
+    const facetInLookupMessageStage = {
+      $facet: {
+        unread: [
+          {
+            $match: {
+              readBy: { $ne: userObjectId },
+              author: { $ne: userObjectId },
+            },
+          },
+          sortByCreatedAtStage,
+        ],
+        rest: [
+          {
+            $match: {
+              $or: [{ readBy: userObjectId }, { author: userObjectId }],
+            },
+          },
+          sortByCreatedAtStage,
+        ],
+      },
+    };
+
+    const lookupMessageStage = {
+      $lookup: {
+        from: 'messages',
+        let: {
+          chatId: '$_id',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$chat', '$$chatId'],
+              },
+            },
+          },
+          facetInLookupMessageStage,
+        ],
+        as: 'lastMessage',
+      },
+    };
+
+    const addFieldsAfterLookupStage = {
+      $addFields: { lastMessage: { $arrayElemAt: ['$lastMessage', 0] } },
+    };
+
+    const addFieldForLastMessageStage = {
+      $addFields: {
+        unread: { $size: '$lastMessage.unread' },
+        lastMessage: {
+          $cond: {
+            if: {
+              $gt: [{ $size: '$lastMessage.unread' }, 0],
+            },
+            then: { $arrayElemAt: ['$lastMessage.unread', 0] },
+            else: { $arrayElemAt: ['$lastMessage.rest', 0] },
+          },
+        },
+      },
+    };
+
+    const sortStage = {
+      $sort: { 'lastMessage.createdAt': -1, unread: -1 },
+    };
+
+    const pipeline = [
+      matchUserChatStage,
+      skipStage,
+      limitStage,
+      lookupMembersStage,
+      lookupMessageStage,
+      addFieldsAfterLookupStage,
+      addFieldForLastMessageStage,
+      sortStage,
+    ];
+
+    const chats = await this.aggregate<IFindWithLastMessageObject>(pipeline);
+
+    return chats;
   },
 };
 

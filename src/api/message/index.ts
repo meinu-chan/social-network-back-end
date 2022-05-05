@@ -2,9 +2,14 @@ import { Router } from 'express';
 
 import { validate } from '../../services/validation';
 import { protect } from '../../services/access';
-import { validateCreateMessage, validateListMessage } from '../../constants/messages';
+import {
+  validateCreateMessage,
+  validateListMessage,
+  validateReadMessage,
+} from '../../constants/messages';
 import create from './create';
 import list from './list';
+import read from './read';
 
 const router = Router();
 
@@ -75,14 +80,75 @@ router.post('/:chat', protect, validate(validateCreateMessage), create);
  *            required: true
  *            description: The chat id
  *          - in: query
- *            name: skip
+ *            name: date
  *            schema:
- *                type: number
- *                min: 0
- *            description: how many messages should be skipped
+ *                type: string
+ *            description: message start date
+ *          - in: query
+ *            name: operator
+ *            schema:
+ *                type: string
+ *                enum:
+ *                  - "-"
+ *                  - +
+ *            description: handle date operator ('-' - lower than; '+' - greater than); Default operator is '+'
  *      responses:
  *          200:
- *              description: Successfully created message
+ *              description: Successfully got list of messages
+ *              content:
+ *                  application/json:
+ *                      example:
+ *                        {
+ *                          "firstUnreadMessage": {
+ *                            "readBy": [],
+ *                            "_id": "message-id",
+ *                            "author": "author-id",
+ *                            "text": some-text",
+ *                            "chat": "chat-id",
+ *                            "createdAt": "date",
+ *                            "updatedAt": "date"
+ *                          },
+ *                          "messages": {
+ *                            "YYYY.MM.DD": [
+ *                              {
+ *                                "_id": "message-id",
+ *                                "readBy": [],
+ *                                "author": "author-id",
+ *                                "text": "text",
+ *                                "chat": "chat-id",
+ *                                "createdAt": "date",
+ *                                "updatedAt": "date"
+ *                              }
+ *                            ]
+ *                          }
+ *                        }
+ *          401:
+ *             $ref: '#/components/responses/UnauthorizedError'
+ *          404:
+ *             $ref: '#/components/responses/NotFoundError'
+ */
+// @ts-ignore
+router.get('/:chat', protect, validate(validateListMessage), list);
+
+/**
+ * @swagger
+ * /api/v1/messages/{id}:
+ *  patch:
+ *      summary: Read message
+ *      security:
+ *          - BearerAuth: []
+ *      description: Read message by id
+ *      tags: ["Message"]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *                type: string
+ *            required: true
+ *            description: The message id
+ *      responses:
+ *          200:
+ *              description: Successfully read message
  *              content:
  *                  application/json:
  *                      example:
@@ -94,6 +160,6 @@ router.post('/:chat', protect, validate(validateCreateMessage), create);
  *             $ref: '#/components/responses/NotFoundError'
  */
 // @ts-ignore
-router.get('/:chat', protect, validate(validateListMessage), list);
+router.patch('/:id', protect, validate(validateReadMessage), read);
 
 export default router;

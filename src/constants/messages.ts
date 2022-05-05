@@ -1,5 +1,5 @@
 import { param, query } from 'express-validator';
-import { bodyStringExist, isValidMongoId } from './general';
+import { bodyStringExist, isValidMongoId, validateMongoId } from './general';
 
 export const validateListMessage = [
   param('chat')
@@ -10,11 +10,14 @@ export const validateListMessage = [
     .withMessage('- should be a string.')
     .bail()
     .custom(isValidMongoId),
-  query('skip')
+  query('date').optional().isISO8601().toDate(),
+  query('operator')
     .optional()
-    .isInt({ min: 0 })
-    .withMessage('- should be integer greater than 0.')
-    .customSanitizer((v) => +v),
+    .isString()
+    .withMessage('- should be a string')
+    .bail()
+    .isIn(['-', '+'])
+    .withMessage("- should be '+'/'-'."),
 ];
 
 export const validateCreateMessage = [
@@ -28,3 +31,5 @@ export const validateCreateMessage = [
     .custom(isValidMongoId),
   bodyStringExist('text'),
 ];
+
+export const validateReadMessage = validateMongoId;

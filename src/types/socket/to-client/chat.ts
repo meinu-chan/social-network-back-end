@@ -4,7 +4,7 @@ import { SocketEvent } from '../common';
 type ToClientReceiveMessagePayload = IUser['_id'];
 
 export type ToClientReceiveMessageEvent = SocketEvent<
-  'receiveMessage',
+  'CHAT::RECEIVE',
   ToClientReceiveMessagePayload
 >;
 

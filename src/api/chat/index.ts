@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { validate } from '../../services/validation';
 import { protect } from '../../services/access';
 import start from './start';
-import { validateStartChat } from '../../constants/chat';
+import { validateListChat, validateStartChat } from '../../constants/chat';
+import list from './list';
 
 const router = Router();
 
@@ -47,5 +48,39 @@ const router = Router();
  */
 // @ts-ignore
 router.post('/start', protect, validate(validateStartChat), start);
+
+/**
+ * @swagger
+ * /api/v1/chats/:
+ *  get:
+ *      summary: Start to chat
+ *      security:
+ *          - BearerAuth: []
+ *      description: Start chat
+ *      tags: ["Chat"]
+ *      responses:
+ *          200:
+ *              description: Successfully get list of chats
+ *              content:
+ *                  application/json:
+ *                      example:
+ *                       [
+ *                          {
+ *                               "isPrivate": true,
+ *                               "members": [ "6242e4df6abf9b36a9bd5ba4", "6241712667f941901dcc533f" ],
+ *                               "_id": "624c00056c71316fc3377538",
+ *                               "createdAt": "date",
+ *                               "updatedAt": "date",
+ *                               "lastMessage": "some-message",
+ *                               "unread": 0
+ *                          }
+ *                       ]
+ *          401:
+ *             $ref: '#/components/responses/UnauthorizedError'
+ *          404:
+ *             $ref: '#/components/responses/NotFoundError'
+ */
+// @ts-ignore
+router.get('/', protect, validate(validateListChat), list);
 
 export default router;

@@ -10,7 +10,7 @@ interface IParams {
 }
 
 interface IQuery {
-  skip: number;
+  date: Date;
 }
 
 export default async (
@@ -20,14 +20,25 @@ export default async (
 ) => {
   try {
     const { chat: chatId } = req.params;
-    const { skip } = req.query;
+    const { date } = req.query;
+    const { _id: userId } = req.user;
 
     const chat = await Chat.findById(chatId);
 
     if (!chat) throw new AppError('Chat not found.', 404);
 
-    const messages = await Message.find({ chat: chat.id }, {}, { skip, limit: 20 });
-    return res.status(200).json(messages);
+    const firstUnreadMessage = await Message.findOne(
+      {
+        readBy: { $ne: userId },
+        author: { $ne: userId },
+      },
+      {},
+      { sort: { createdAt: 1 } },
+    );
+
+    const messages = await Message.findList(chat.id, firstUnreadMessage, date);
+
+    return res.status(200).json({ firstUnreadMessage, messages });
   } catch (error) {
     next(error);
   }
