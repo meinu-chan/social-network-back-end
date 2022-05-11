@@ -1,4 +1,7 @@
-import { ToClientReceiveMessageEvent } from '../../../types/socket/to-client/chat';
+import {
+  ToClientReadMessageEvent,
+  ToClientReceiveMessageEvent,
+} from '../../../types/socket/to-client/chat';
 import {
   ToClientConnectionEvent,
   ToClientDisconnectionEvent,
@@ -23,6 +26,15 @@ export const notifyClientReceiveMessage = (
   room: string,
 ): ToClientReceiveMessageEvent => ({
   event: 'CHAT::RECEIVE',
+  payload,
+  room,
+});
+
+export const notifyClientReadMessage = (
+  payload: ToClientReadMessageEvent['payload'],
+  room: string,
+): ToClientReadMessageEvent => ({
+  event: 'MESSAGE::READ',
   payload,
   room,
 });

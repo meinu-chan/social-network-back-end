@@ -14,7 +14,12 @@ export type FromClientLeaveRoomPayload = IChat['_id'];
 
 export type FromClientLeaveRoomEvent = SocketEvent<'CHAT::LEAVE', FromClientLeaveRoomPayload>;
 
+type FromClientReadMessagePayload = { chat: IChat['_id']; message: IMessage };
+
+export type FromClientReadMessageEvent = SocketEvent<'MESSAGE::READ', FromClientReadMessagePayload>;
+
 export type FromClientEvent =
   | FromClientJoinRoomEvent
   | FromClientSendMessageEvent
-  | FromClientLeaveRoomEvent;
+  | FromClientLeaveRoomEvent
+  | FromClientReadMessageEvent;

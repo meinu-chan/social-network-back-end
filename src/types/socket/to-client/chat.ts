@@ -1,11 +1,15 @@
-import { IUser } from '../../../api/user/model';
+import { IMessage } from '../../../api/message/model';
 import { SocketEvent } from '../common';
 
-type ToClientReceiveMessagePayload = IUser['_id'];
+type ToClientReceiveMessagePayload = IMessage;
 
 export type ToClientReceiveMessageEvent = SocketEvent<
   'CHAT::RECEIVE',
   ToClientReceiveMessagePayload
 >;
 
-export type ToClientEvent = ToClientReceiveMessageEvent;
+type ToClientReadMessagePayload = IMessage;
+
+export type ToClientReadMessageEvent = SocketEvent<'MESSAGE::READ', ToClientReadMessagePayload>;
+
+export type ToClientEvent = ToClientReceiveMessageEvent | ToClientReadMessageEvent;

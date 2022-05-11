@@ -3,6 +3,7 @@ import { leaveRoom } from '../helpers/room';
 import { connectUser } from './connect-user';
 import { isOnlineUser } from './is-online';
 import { joinRoom } from './join-room';
+import { readMessage } from './read-message';
 import { sendMessage } from './send-message';
 
 type SocketEventHandler = {
@@ -18,4 +19,5 @@ export const handler: SocketEventHandler = {
   'CHAT::JOIN': joinRoom,
   'CHAT::SEND': sendMessage,
   'CHAT::LEAVE': leaveRoom,
+  'MESSAGE::READ': readMessage,
 };
