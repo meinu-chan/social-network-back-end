@@ -9,6 +9,6 @@ export function isOnlineUser(
 ): IEventHandler {
   return {
     notify: 'me',
-    event: users[this.id] ? notifyClientOnline(userId) : notifyClientDisconnect(userId),
+    event: users[userId] ? notifyClientOnline(userId) : notifyClientDisconnect(userId),
   };
 }

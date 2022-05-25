@@ -21,5 +21,5 @@ export type ServerToClientEvent = ToClientConnectionEvent | ToClientChatEvent;
 
 export interface IEventHandler {
   event: ServerToClientEvent;
-  notify: 'me' | 'others' | 'room' | 'all';
+  notify: 'me' | 'others' | 'room' | 'all' | 'user';
 }

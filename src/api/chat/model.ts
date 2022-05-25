@@ -17,10 +17,7 @@ interface IFindWithLastMessageObject extends Omit<IChat, 'members'> {
 
 interface IChatModel extends Model<IChatDocument> {
   findOrCreate: (body: Pick<IChat, 'isPrivate' | 'members'>) => Promise<IChatDocument>;
-  findWithLastMessage: (
-    userId: IUser['_id'],
-    skip: number,
-  ) => Promise<IFindWithLastMessageObject[]>;
+  findWithLastMessage: (userId: IUser['_id']) => Promise<IFindWithLastMessageObject[]>;
 }
 
 const chatSchema: Schema<IChatDocument> = new Schema(
@@ -60,10 +57,7 @@ chatSchema.statics = {
 
     return chat;
   },
-  async findWithLastMessage(
-    userId: IUser['_id'],
-    skip: number,
-  ): Promise<IFindWithLastMessageObject[]> {
+  async findWithLastMessage(userId: IUser['_id']): Promise<IFindWithLastMessageObject[]> {
     const userObjectId = new Types.ObjectId(userId);
 
     const matchUserChatStage = {
@@ -71,8 +65,6 @@ chatSchema.statics = {
         members: userObjectId,
       },
     };
-
-    const skipStage = { $skip: skip };
 
     const limitStage = { $limit: 10 };
 
@@ -167,7 +159,6 @@ chatSchema.statics = {
 
     const pipeline = [
       matchUserChatStage,
-      skipStage,
       limitStage,
       lookupMembersStage,
       lookupMessageStage,

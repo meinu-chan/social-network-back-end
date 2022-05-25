@@ -1,6 +1,7 @@
 import { IMessage } from '../../../api/message/model';
 import { IChat } from '../../../api/chat/model';
 import { SocketEvent } from '../common';
+import { IUser } from '../../../api/user/model';
 
 type FromClientJoinRoomPayload = IChat['_id'];
 
@@ -18,8 +19,16 @@ type FromClientReadMessagePayload = { chat: IChat['_id']; message: IMessage };
 
 export type FromClientReadMessageEvent = SocketEvent<'MESSAGE::READ', FromClientReadMessagePayload>;
 
+type FromClientGlobalNotifyPayload = IUser['_id'];
+
+export type FromClientGlobalNotifyMessageReceiveEvent = SocketEvent<
+  'GLOBAL::NOTIFY::MESSAGE_RECEIVE',
+  FromClientGlobalNotifyPayload
+>;
+
 export type FromClientEvent =
   | FromClientJoinRoomEvent
   | FromClientSendMessageEvent
   | FromClientLeaveRoomEvent
-  | FromClientReadMessageEvent;
+  | FromClientReadMessageEvent
+  | FromClientGlobalNotifyMessageReceiveEvent;

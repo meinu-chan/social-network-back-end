@@ -29,6 +29,7 @@ export interface IUserDocument extends Document {
   job?: string;
   school?: string;
   university?: string;
+  lastOnline: Date;
 
   view: () => IUser;
   comparePassword: (password: string) => Promise<boolean>;
@@ -65,6 +66,10 @@ const userSchema: Schema<IUserDocument> = new Schema(
       type: String,
       default: UserRole.user,
       enum: roles,
+    },
+    lastOnline: {
+      type: Date,
+      default: new Date(),
     },
     birthday: Date,
     country: {

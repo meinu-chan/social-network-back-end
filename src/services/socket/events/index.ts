@@ -1,4 +1,5 @@
 import {
+  ToClientGlobalReceiveMessageEvent,
   ToClientReadMessageEvent,
   ToClientReceiveMessageEvent,
 } from '../../../types/socket/to-client/chat';
@@ -35,6 +36,15 @@ export const notifyClientReadMessage = (
   room: string,
 ): ToClientReadMessageEvent => ({
   event: 'MESSAGE::READ',
+  payload,
+  room,
+});
+
+export const notifyUserGlobalMessageReceive = (
+  payload: ToClientGlobalReceiveMessageEvent['payload'],
+  room: string,
+): ToClientGlobalReceiveMessageEvent => ({
+  event: 'GLOBAL::CHAT::RECEIVE',
   payload,
   room,
 });

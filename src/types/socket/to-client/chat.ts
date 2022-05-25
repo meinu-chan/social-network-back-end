@@ -12,4 +12,14 @@ type ToClientReadMessagePayload = IMessage;
 
 export type ToClientReadMessageEvent = SocketEvent<'MESSAGE::READ', ToClientReadMessagePayload>;
 
-export type ToClientEvent = ToClientReceiveMessageEvent | ToClientReadMessageEvent;
+type ToClientGlobalReceiveMessagePayload = null;
+
+export type ToClientGlobalReceiveMessageEvent = SocketEvent<
+  'GLOBAL::CHAT::RECEIVE',
+  ToClientGlobalReceiveMessagePayload
+>;
+
+export type ToClientEvent =
+  | ToClientReceiveMessageEvent
+  | ToClientReadMessageEvent
+  | ToClientGlobalReceiveMessageEvent;

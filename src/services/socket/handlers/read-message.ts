@@ -9,6 +9,4 @@ export function readMessage(
 ): IEventHandler | void {
   if (rooms[room][this.id])
     return { notify: 'room', event: notifyClientReadMessage(message, room) };
-
-  throw new Error('Some error');
 }

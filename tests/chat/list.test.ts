@@ -85,31 +85,6 @@ describe(route, () => {
         expect(item.unread).toBe(1);
       }
     });
-
-    test('Successfully got skipped list of chats', async () => {
-      const { status, body } = await request[method](`${route}?skip=1`).set(
-        'Authorization',
-        `Bearer ${token}`,
-      );
-      expect(status).toBe(200);
-      expect(Array.isArray(body)).toBe(true);
-      expect(body.length).toBe(1);
-
-      type ChatKey = keyof typeof chatPayload;
-      type MessageKey = keyof typeof messagePayload;
-
-      for (const item of body) {
-        for (const key of Object.keys(chatPayload)) {
-          expect(item[key]).toBe(chatPayload[key as ChatKey]);
-        }
-
-        for (const key of Object.keys(messagePayload)) {
-          expect(item.lastMessage[key]).toStrictEqual(messagePayload[key as MessageKey]);
-        }
-
-        expect(item.unread).toBe(1);
-      }
-    });
   });
 
   describe(`${route} handle errors`, () => {

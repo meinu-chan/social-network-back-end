@@ -2,6 +2,7 @@ import { Server as HTTPSServer } from 'https';
 import { Server as HTTPServer } from 'http';
 import WebSocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
+import User from '../../api/user/model';
 import { ClientToServerEvent, ISocket } from '../../types/socket/common';
 import { handler } from './handlers';
 import { users } from './users';
@@ -18,7 +19,7 @@ export const wsServer = (server: HTTPSServer | HTTPServer) => {
     const id = uuidv4();
     ws.id = id;
 
-    ws.on('message', async (msg) => {
+    ws.on('message', (msg) => {
       const { event, payload } = JSON.parse(msg.toString()) as ClientToServerEvent;
 
       logger(event, payload);
@@ -32,16 +33,28 @@ export const wsServer = (server: HTTPSServer | HTTPServer) => {
       }
     });
 
-    ws.on('close', () => {
+    ws.on('close', async () => {
       logger('close', `User ${id} closed the connection.`);
+
+      let userId: string | null = null;
+
+      Object.entries(users).forEach(([uId, socket]) => {
+        if (socket.id === id) {
+          userId = uId;
+        }
+        return;
+      });
 
       const leave = leaveRoom.bind(ws);
 
       Object.keys(rooms).forEach((room) => leave(room));
 
-      notifier.others.call(this, ws, notifyClientDisconnect(users[id]));
+      if (!userId) return;
+      notifier.others.call(this, ws, notifyClientDisconnect(userId));
 
-      delete users[id];
+      delete users[userId];
+
+      await User.updateOne({ _id: users[id] }, { $set: { lastOnline: new Date() } });
     });
   });
 };

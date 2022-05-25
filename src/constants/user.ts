@@ -31,6 +31,7 @@ export const validateUpdateMeUser = [
   bodyStringOptional('country.name'),
   bodyStringOptional('country.flag'),
   bodyStringOptional('birthday').custom(isValidDate),
+  bodyStringOptional('lastOnline').custom(isValidDate),
 ];
 
 export const validateListUser = validatePaginationQuery;

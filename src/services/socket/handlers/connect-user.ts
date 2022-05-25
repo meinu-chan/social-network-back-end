@@ -7,7 +7,7 @@ export function connectUser(
   this: ISocket,
   userId: FromClientConnectionEvent['payload'],
 ): IEventHandler {
-  users[this.id] = userId;
+  users[userId] = this;
 
   return { event: notifyClientOnline(userId), notify: 'others' };
 }
