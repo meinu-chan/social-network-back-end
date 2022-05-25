@@ -2,12 +2,16 @@ import { Router } from 'express';
 import sessionV1 from './session';
 import awsV1 from './aws';
 import userV1 from './user';
+import chatV1 from './chat';
+import messageV1 from './message';
 
 const router = Router();
 
 router.use('/session', sessionV1);
 router.use('/aws', awsV1);
 router.use('/users', userV1);
+router.use('/chats', chatV1);
+router.use('/messages', messageV1);
 
 /**
  * @swagger
@@ -101,6 +105,23 @@ router.use('/users', userV1);
  *              contentType:
  *                  type: string
  *                  description: object key
+ *                  required: true
+ *      StartChat:
+ *          type: object
+ *          properties:
+ *              isPrivate:
+ *                  type: boolean
+ *                  description: isChatPrivate
+ *              withUser:
+ *                  type: string
+ *                  description: user's _id
+ *                  required: true
+ *      CreateMessage:
+ *          type: object
+ *          properties:
+ *              text:
+ *                  type: string
+ *                  description: message text
  *                  required: true
  *  responses:
  *      UnauthorizedError:

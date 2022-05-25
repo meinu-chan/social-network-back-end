@@ -4,7 +4,7 @@ import { IInvalidRequest } from './constants';
 
 let r: any, user: IUserDocument, userSession: any, auth: boolean;
 
-export default ({
+function invalidRequest({
   route,
   method,
   request,
@@ -15,7 +15,7 @@ export default ({
   params,
   paginated = false,
   nestedRoutes,
-}: IInvalidRequest) => {
+}: IInvalidRequest) {
   beforeAll(() => {
     r = request[method];
 
@@ -36,7 +36,7 @@ export default ({
     if (auth) {
       user = await User.create({
         fullName: 'Some User',
-        email: 'someuser@mail.com',
+        email: 'incalid-request-user@mail.com',
         password: 's0mEPa5$W*rd',
         role: userRole,
       });
@@ -83,4 +83,6 @@ export default ({
         }
       });
   });
-};
+}
+
+export default invalidRequest;

@@ -16,7 +16,7 @@ mongoose
       })
       .on('error', (e) => console.error(e));
 
-    wsServer(server);
+    if (process.env.NODE_ENV !== 'test') wsServer(server);
   })
   .catch((err) => {
     console.error(err);

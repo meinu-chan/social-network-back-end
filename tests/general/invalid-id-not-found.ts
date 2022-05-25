@@ -5,7 +5,7 @@ import { IInvalidIdOrNotFound } from './constants';
 
 let r: any, user: IUserDocument, userSession: any, auth: boolean;
 
-export default ({
+function invalidIdNotFound({
   route,
   method,
   param = 'id',
@@ -15,7 +15,22 @@ export default ({
   paginated = false,
   params,
   nestedRoutes,
-}: IInvalidIdOrNotFound) => {
+  query = [],
+}: IInvalidIdOrNotFound) {
+  const routeSetParams = (param: string) => {
+    let newRoute = route + param;
+
+    if (nestedRoutes) {
+      nestedRoutes.forEach((nestedRoute) => (newRoute += `/${nestedRoute}`));
+    }
+
+    if (query.length) newRoute += `?${query.join('&')}`;
+
+    if (paginated) newRoute += `${query ? '?' : '&'}limit=10&page=1`;
+
+    return newRoute;
+  };
+
   beforeAll(() => {
     r = request[method];
 
@@ -28,7 +43,7 @@ export default ({
     if (auth) {
       user = await User.create({
         fullName: 'Some User',
-        email: 'someuser@mail.com',
+        email: 'invalid-id-not-found-user@mail.com',
         password: 's0mEPa5$W*rd',
         role: userRole,
       });
@@ -39,13 +54,7 @@ export default ({
 
   describe(`${route} Handle invalid id and notFound`, () => {
     test(`Bad request - invalid ${param}`, async () => {
-      let newRoute = route.concat('/invalid-id');
-
-      if (nestedRoutes) {
-        nestedRoutes.forEach((nestedRoute) => (newRoute += `/${nestedRoute}`));
-      }
-
-      if (paginated) newRoute = newRoute.concat('?limit=10&page=1');
+      const newRoute = routeSetParams('/invalid-id');
 
       const { status, body } = auth
         ? await r(newRoute).set('Authorization', `Bearer ${userSession}`).send(reqBody)
@@ -58,13 +67,7 @@ export default ({
     });
 
     test(`Not found - object not found into collection`, async () => {
-      let newRoute = route.concat(`/${Types.ObjectId()}`);
-
-      if (nestedRoutes) {
-        nestedRoutes.forEach((nestedRoute) => (newRoute += `/${nestedRoute}`));
-      }
-
-      if (paginated) newRoute = newRoute.concat('?limit=10&page=1');
+      const newRoute = routeSetParams(`/${new Types.ObjectId()}`);
 
       const { status, body } = auth
         ? await r(newRoute).set('Authorization', `Bearer ${userSession}`).send(reqBody)
@@ -76,4 +79,6 @@ export default ({
       expect(body.message).toMatch(/not found/);
     });
   });
-};
+}
+
+export default invalidIdNotFound;

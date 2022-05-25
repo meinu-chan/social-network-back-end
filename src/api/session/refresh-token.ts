@@ -27,7 +27,7 @@ export default async (
     await session.save();
 
     const tokens = {
-      accessToken: signToken(session.userId),
+      accessToken: signToken(session.userId.toString()),
       refreshToken: session.refreshToken,
     };
 

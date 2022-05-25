@@ -30,7 +30,7 @@ export default ({
     if (auth) {
       user = await User.create({
         fullName: 'Some User',
-        email: 'someuser@mail.com',
+        email: 'pagination-error-user@mail.com',
         password: 's0mEPa5$W*rd',
         role: userRole,
       });
