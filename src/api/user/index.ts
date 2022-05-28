@@ -12,7 +12,13 @@ import {
   validateUpdateMeUser,
   validateListUser,
   validateNonPaginatedListUser,
+  validateSubscribeUser,
+  validateUnsubscribeUser,
+  validateCommunityList,
 } from '../../constants/user';
+import subscribe from './subscribe';
+import unsubscribe from './unsubscribe';
+import communityList from './community-list';
 
 const router = Router();
 
@@ -147,6 +153,104 @@ router.get('/me', protect, showMe);
  */
 //@ts-ignore
 router.get('/:id', validate(validateShowUser), show);
+
+/**
+ * @swagger
+ * /api/v1/users/{id}/community:
+ *   get:
+ *      summary: Successfully user's community
+ *      description: Successfully user's community
+ *      tags: ["User"]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *                type: string
+ *            required: true
+ *            description: The user id
+ *          - in: query
+ *            name: type
+ *            schema:
+ *                type: string
+ *            required: true
+ *            enum:
+ *              - subscribers
+ *              - subscribed
+ *            description: The user id
+ *      requestBody:
+ *      responses:
+ *          200:
+ *             description: Successfully user's community
+ *             content:
+ *                 application/json:
+ *                     example:
+ *                        {
+ *                        }
+ *          400:
+ *             $ref: '#/components/responses/BadRequestError'
+ */
+//@ts-ignore
+router.get('/:id/community', validate(validateCommunityList), communityList);
+
+/**
+ * @swagger
+ * /api/v1/users/{id}/subscribe:
+ *  patch:
+ *      summary: Successfully subscribed on user
+ *      description: Successfully subscribed on user
+ *      security:
+ *          - BearerAuth: []
+ *      tags: ["User"]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *                type: string
+ *            required: true
+ *            description: The user id
+ *      responses:
+ *          200:
+ *             description: Successfully updated me
+ *             content:
+ *                 application/json:
+ *                     example:
+ *                        {
+ *                        }
+ *          400:
+ *             $ref: '#/components/responses/BadRequestError'
+ */
+//@ts-ignore
+router.patch('/:id/subscribe', protect, validate(validateSubscribeUser), subscribe);
+
+/**
+ * @swagger
+ * /api/v1/users/{id}/unsubscribe:
+ *  patch:
+ *      summary: Successfully unsubscribe on user
+ *      description: Successfully unsubscribe on user
+ *      security:
+ *          - BearerAuth: []
+ *      tags: ["User"]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *                type: string
+ *            required: true
+ *            description: The user id
+ *      responses:
+ *          200:
+ *             description: Successfully updated me
+ *             content:
+ *                 application/json:
+ *                     example:
+ *                        {
+ *                        }
+ *          400:
+ *             $ref: '#/components/responses/BadRequestError'
+ */
+//@ts-ignore
+router.patch('/:id/unsubscribe', protect, validate(validateUnsubscribeUser), unsubscribe);
 
 /**
  * @swagger

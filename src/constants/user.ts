@@ -39,3 +39,16 @@ export const validateListUser = validatePaginationQuery;
 export const validateNonPaginatedListUser = [
   query('field').optional().isString().withMessage('- should be a string.').bail(),
 ];
+
+export const validateSubscribeUser = validateMongoId;
+export const validateUnsubscribeUser = validateMongoId;
+
+export const validateCommunityList = [
+  ...validateMongoId,
+  query('type')
+    .exists()
+    .withMessage('- must exist.')
+    .isString()
+    .withMessage('- should be a string.')
+    .isIn(['subscribed', 'subscribers']),
+];

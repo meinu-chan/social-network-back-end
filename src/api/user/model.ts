@@ -1,4 +1,4 @@
-import { Document, LeanDocument, model, Schema } from 'mongoose';
+import { Document, LeanDocument, Model, model, Schema, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { emailRegex, fullNameRegex, roles } from '../../constants/user';
 
@@ -30,9 +30,18 @@ export interface IUserDocument extends Document {
   school?: string;
   university?: string;
   lastOnline: Date;
+  subscribers: IUserDocument['_id'][];
+  subscribed: IUserDocument['_id'][];
 
   view: () => IUser;
   comparePassword: (password: string) => Promise<boolean>;
+}
+
+interface IUserModel extends Model<IUserDocument> {
+  getCommunity: (
+    id: string,
+    field: 'subscribed' | 'subscribers',
+  ) => Promise<Omit<IUser, 'password'>[]>;
 }
 
 const userSchema: Schema<IUserDocument> = new Schema(
@@ -83,6 +92,16 @@ const userSchema: Schema<IUserDocument> = new Schema(
     job: String,
     school: String,
     university: String,
+    subscribers: {
+      type: [Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
+    subscribed: {
+      type: [Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -117,6 +136,70 @@ userSchema.set('toObject', {
   },
 });
 
+userSchema.statics = {
+  async getCommunity(
+    id: string,
+    field: 'subscribed' | 'subscribers',
+  ): Promise<Omit<IUser, 'password'>[]> {
+    const matchState = {
+      $match: {
+        _id: new Types.ObjectId(id),
+      },
+    };
+
+    const projectStage = {
+      $project: {
+        [field]: 1,
+        _id: 0,
+      },
+    };
+
+    const unwindByFieldStage = { $unwind: { path: `$${field}` } };
+
+    const lookupStage = {
+      $lookup: {
+        from: 'users',
+        localField: field,
+        foreignField: '_id',
+        as: 'user',
+      },
+    };
+
+    const unwindStage = {
+      $unwind: {
+        path: '$user',
+        preserveNullAndEmptyArrays: true,
+      },
+    };
+
+    const replaceRootStage = {
+      $replaceRoot: {
+        newRoot: '$user',
+      },
+    };
+
+    const removePasswordFieldStage = {
+      $project: {
+        password: 0,
+      },
+    };
+
+    const pipeline = [
+      matchState,
+      projectStage,
+      unwindByFieldStage,
+      lookupStage,
+      unwindStage,
+      replaceRootStage,
+      removePasswordFieldStage,
+    ];
+
+    const community = await this.aggregate<Omit<IUser, 'password'>>(pipeline);
+
+    return community;
+  },
+};
+
 userSchema.methods = {
   view(): IUser {
     return this.toObject();
@@ -127,4 +210,4 @@ userSchema.methods = {
   },
 };
 
-export default model<IUserDocument>('User', userSchema);
+export default model<IUserDocument, IUserModel>('User', userSchema);

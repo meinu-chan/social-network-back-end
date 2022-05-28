@@ -4,6 +4,9 @@ import awsV1 from './aws';
 import userV1 from './user';
 import chatV1 from './chat';
 import messageV1 from './message';
+import postV1 from './post';
+import likeV1 from './like';
+import commentV1 from './comment';
 
 const router = Router();
 
@@ -12,6 +15,9 @@ router.use('/aws', awsV1);
 router.use('/users', userV1);
 router.use('/chats', chatV1);
 router.use('/messages', messageV1);
+router.use('/posts', postV1);
+router.use('/likes', likeV1);
+router.use('/comments', commentV1);
 
 /**
  * @swagger
@@ -122,6 +128,20 @@ router.use('/messages', messageV1);
  *              text:
  *                  type: string
  *                  description: message text
+ *                  required: true
+ *      CreatePost:
+ *          type: object
+ *          properties:
+ *              text:
+ *                  type: string
+ *                  description: post text
+ *                  required: true
+ *      CreateComment:
+ *          type: object
+ *          properties:
+ *              text:
+ *                  type: string
+ *                  description: post text
  *                  required: true
  *  responses:
  *      UnauthorizedError:
