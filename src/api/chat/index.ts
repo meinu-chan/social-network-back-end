@@ -4,6 +4,7 @@ import { protect } from '../../services/access';
 import start from './start';
 import { validateListChat, validateStartChat } from '../../constants/chat';
 import list from './list';
+import unreadMessages from './unread-messages';
 
 const router = Router();
 
@@ -82,5 +83,29 @@ router.post('/start', protect, validate(validateStartChat), start);
  */
 // @ts-ignore
 router.get('/', protect, validate(validateListChat), list);
+
+/**
+ * @swagger
+ * /api/v1/chats/unread-messages:
+ *  get:
+ *      summary: Start to chat
+ *      security:
+ *          - BearerAuth: []
+ *      description: Start chat
+ *      tags: ["Chat"]
+ *      responses:
+ *          200:
+ *              description: Successfully get list of chats
+ *              content:
+ *                  application/json:
+ *                      example:
+ *                          {unread: 10}
+ *          401:
+ *             $ref: '#/components/responses/UnauthorizedError'
+ *          404:
+ *             $ref: '#/components/responses/NotFoundError'
+ */
+//@ts-ignore
+router.get('/unread-messages', protect, unreadMessages);
 
 export default router;

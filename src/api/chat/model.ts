@@ -18,6 +18,7 @@ interface IFindWithLastMessageObject extends Omit<IChat, 'members'> {
 interface IChatModel extends Model<IChatDocument> {
   findOrCreate: (body: Pick<IChat, 'isPrivate' | 'members'>) => Promise<IChatDocument>;
   findWithLastMessage: (userId: IUser['_id']) => Promise<IFindWithLastMessageObject[]>;
+  unreadMessagesCount: (userId: IUser['_id']) => Promise<{ unread: number }>;
 }
 
 const chatSchema: Schema<IChatDocument> = new Schema(
@@ -170,6 +171,44 @@ chatSchema.statics = {
     const chats = await this.aggregate<IFindWithLastMessageObject>(pipeline);
 
     return chats;
+  },
+  async unreadMessagesCount(userId: IUser['_id']): Promise<{ unread: number }> {
+    const user = new Types.ObjectId(userId);
+
+    const matchStage = {
+      $match: { members: user },
+    };
+
+    const lookupStage = {
+      $lookup: {
+        from: 'messages',
+        let: { chatId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ['$chat', '$$chatId'],
+              },
+              author: { $ne: user },
+              readBy: { $ne: user },
+            },
+          },
+        ],
+        as: 'message',
+      },
+    };
+
+    const unwindStage = { $unwind: { path: '$message' } };
+
+    const countStage = { $count: 'unread' };
+
+    const pipeline = [matchStage, lookupStage, unwindStage, countStage];
+
+    const unreadCount = await this.aggregate<{ unread: number }>(pipeline);
+
+    if (!unreadCount.length) return { unread: 0 };
+
+    return unreadCount[0];
   },
 };
 
