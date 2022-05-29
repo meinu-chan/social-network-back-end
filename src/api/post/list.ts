@@ -20,7 +20,7 @@ export default async (
 
     const filter: FilterQuery<IPostDocument> = { page: id };
 
-    if (createdAt) filter.createdAt = createdAt;
+    if (createdAt) filter.createdAt = { $lt: createdAt };
 
     const posts = await Post.find(filter, {}, { limit: +limit, sort: { createdAt: -1 } });
 
