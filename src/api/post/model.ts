@@ -35,7 +35,7 @@ const postSchema = new Schema<IPostDocument>(
 postSchema.index({ author: 1 });
 
 postSchema.pre(/^find/, function (next) {
-  this.populate('author', '-password');
+  this.populate('user', '-password');
 
   next();
 });
