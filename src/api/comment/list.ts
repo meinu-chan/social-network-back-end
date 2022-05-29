@@ -20,7 +20,7 @@ export default async (
 
     const filter: FilterQuery<ICommentDocument> = { post: id };
 
-    if (createdAt) filter.createdAt = createdAt;
+    if (createdAt) filter.createdAt = { $lt: createdAt };
 
     const comments = await Comment.find(filter, {}, { limit: +limit, sort: { createdAt: -1 } });
 
