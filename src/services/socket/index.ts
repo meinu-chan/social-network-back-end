@@ -2,7 +2,6 @@ import { Server as HTTPSServer } from 'https';
 import { Server as HTTPServer } from 'http';
 import WebSocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
-import User from '../../api/user/model';
 import { ClientToServerEvent, ISocket } from '../../types/socket/common';
 import { handler } from './handlers';
 import { users } from './users';
@@ -33,7 +32,7 @@ export const wsServer = (server: HTTPSServer | HTTPServer) => {
       }
     });
 
-    ws.on('close', async () => {
+    ws.on('close', () => {
       logger('close', `User ${id} closed the connection.`);
 
       let userId: string | null = null;
@@ -53,8 +52,6 @@ export const wsServer = (server: HTTPSServer | HTTPServer) => {
       notifier.others.call(this, ws, notifyClientDisconnect(userId));
 
       delete users[userId];
-
-      await User.updateOne({ _id: users[id] }, { $set: { lastOnline: new Date() } });
     });
   });
 };
