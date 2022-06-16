@@ -314,6 +314,7 @@ router.put('/me', protect, validate(validateUpdateMeUser), updateMe);
 //@ts-ignore
 router.delete('/me', protect, deleteMe);
 
-router.post('/offline', offline);
+//@ts-ignore
+router.post('/offline', protect, offline);
 
 export default router;
