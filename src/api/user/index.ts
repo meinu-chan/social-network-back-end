@@ -19,6 +19,7 @@ import {
 import subscribe from './subscribe';
 import unsubscribe from './unsubscribe';
 import communityList from './community-list';
+import offline from './offline';
 
 const router = Router();
 
@@ -312,5 +313,7 @@ router.put('/me', protect, validate(validateUpdateMeUser), updateMe);
  */
 //@ts-ignore
 router.delete('/me', protect, deleteMe);
+
+router.post('/offline', offline);
 
 export default router;
