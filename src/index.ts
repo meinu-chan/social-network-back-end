@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 mongoose.set('debug', true);
 
 mongoose
+
   .connect(mongo.uri)
   .then(() => {
     app

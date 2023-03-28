@@ -9,6 +9,8 @@ import swaggerJsDocs from 'swagger-jsdoc';
 
 import cors from 'cors';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
+dotenv.config();
 
 process.on('uncaughtException', (e: Error) => {
   console.log('ERROR', e);

@@ -1,9 +1,12 @@
 import { CookieOptions } from 'express';
 import { CorsOptions } from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const env = process.env.NODE_ENV || 'development';
 
-export const port = process.env.PORT || 9000;
+export const port = process.env.PORT || 6000;
 
 export const cors: CorsOptions = {
   origin:
